@@ -99,7 +99,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, watch } from "vue";
 import { useFireBase } from "../stores/FireBase";
 import router from "@/router";
 
@@ -114,6 +114,13 @@ export default defineComponent({
       signUpPassword = "",
       firstName = "",
       lastName = "";
+
+    watch(
+      () => fireBase.user,
+      (newValue, oldValue) => {
+        if (newValue) router.push("/");
+      }
+    );
 
     return {
       signInEmail,
