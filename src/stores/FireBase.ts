@@ -201,7 +201,7 @@ export const useFireBase = defineStore("FireBase", {
     async authChange() {
       const auth = getAuth();
       onAuthStateChanged(auth, async (user) => {
-        this.getToken();
+        await this.getToken();
 
         if (user) {
           this.displayName = user.displayName;
@@ -254,7 +254,7 @@ export const useFireBase = defineStore("FireBase", {
           };
           useBlogPost().viewBlog = blog;
           this.getComment(blog.id);
-          router.push("viewBlog");
+          /* router.push(`viewBlog/${blog.id}`); */
         }
       });
     },
@@ -292,7 +292,6 @@ export const useFireBase = defineStore("FireBase", {
         };
 
         await addDoc(collection(db, "Blogs"), addBlog);
-
         router.push("/");
       } else {
         this.editBlog(

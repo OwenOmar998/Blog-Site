@@ -11,33 +11,34 @@ const routes: Array<RouteRecordRaw> = [
     component: HomeView,
     meta: {
       auth: false,
+      logged: true,
     },
   },
   {
     path: "/login",
     name: "login",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/LogIn.vue"),
+    component: () => import("../views/LogIn.vue"),
     meta: {
       auth: false,
+      logged: false,
     },
   },
   {
     path: "/createBlog",
     name: "createBlog",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/CreateBlog.vue"),
+    component: () => import("../views/CreateBlog.vue"),
     meta: {
       auth: true,
+      logged: true,
     },
   },
   {
-    path: "/viewBlog",
+    path: "/viewBlog:blogId",
     name: "viewBlog",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/ViewBlog.vue"),
+    component: () => import("../views/ViewBlog.vue"),
     meta: {
       auth: false,
+      logged: true,
     },
   },
 ];
@@ -48,27 +49,15 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  await useFireBase().getToken();
+  const user = JSON.parse(localStorage.getItem("user") ?? "");
+  const admin = JSON.parse(localStorage.getItem("admin") ?? "");
   const isValidRoute = routes.some((route) => route.path === to.path);
   if (!isValidRoute) next("/");
-
-  if (to.meta.auth && !useFireBase().admin) {
-    next("/");
-  } else if (!to.meta.auth && useFireBase().user && to.name === "login") {
-    next("/");
-  } else {
-    if (to.name === "home") {
-      useFireBase().getData();
-      useBlogPost().resizeVar();
-    }
-    if (to.name === "createBlog" && useBlogPost().Blogs.length === 0) {
-      useFireBase().getData();
-      useBlogPost().resizeVar();
-    }
-    if (to.name === "viewBlog" && !useBlogPost().viewBlog.id) {
-      router.push("/");
-    }
-    next();
+  else {
+    await useFireBase().getData();
+    useBlogPost().resizeVar();
+    if ((to.meta.auth && !admin) || (!to.meta.logged && user)) next("/");
+    else next();
   }
 });
 

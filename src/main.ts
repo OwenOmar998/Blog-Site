@@ -8,6 +8,7 @@ import { initializeApp } from "firebase/app";
 import firebase from "firebase/compat/app";
 import { getFirestore } from "firebase/firestore";
 import "firebase/compat/functions";
+import { useFireBase } from "./stores/FireBase";
 const firebaseConfig = {
   apiKey: "AIzaSyCUGJlsAVAozE7YnT9n0NNpQQW5kvpHdwI",
   authDomain: "blog-site-6059a.firebaseapp.com",
@@ -23,6 +24,16 @@ firebase.initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const functions = firebase.functions();
 
+firebase.auth().onAuthStateChanged(async (user) => {
+  if (user) {
+    localStorage.setItem("user", JSON.stringify(user));
+    await useFireBase().getToken();
+    localStorage.setItem("admin", JSON.stringify(useFireBase().admin));
+  } else {
+    localStorage.removeItem("user");
+    localStorage.removeItem("admin");
+  }
+});
 createApp(App).use(router).use(createPinia()).mount("#app");
 
 export { db, functions };
