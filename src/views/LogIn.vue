@@ -4,7 +4,7 @@
     <div class="login" v-if="fireBase.showSignInForm">
       <h1>Login</h1>
       <form @submit.prevent="fireBase.signin(email, password)">
-        <div class="txt_field">
+        <div class="txt_field" :id="emailValidity === 'invalid' ? 'error' : ''">
           <input
             id="email"
             name="email"
@@ -70,7 +70,10 @@
       <form
         @submit.prevent="fireBase.signUp(firstName, lastName, email, password)"
       >
-        <div class="txt_field">
+        <div
+          class="txt_field"
+          :id="firstNameValidity === 'invalid' ? 'error' : ''"
+        >
           <input
             id="first-name"
             name="first-name"
@@ -85,7 +88,10 @@
         <h5 class="error" v-if="firstNameValidity === 'invalid'">
           Please enter a valid name
         </h5>
-        <div class="txt_field">
+        <div
+          class="txt_field"
+          :id="lastNameValidity === 'invalid' ? 'error' : ''"
+        >
           <input
             id="last-name"
             name="last-name"
@@ -100,7 +106,7 @@
         <h5 class="error" v-if="lastNameValidity === 'invalid'">
           Please enter a valid name
         </h5>
-        <div class="txt_field">
+        <div class="txt_field" :id="emailValidity === 'invalid' ? 'error' : ''">
           <input
             id="email"
             name="email"
@@ -115,7 +121,10 @@
         <h5 class="error" v-if="emailValidity === 'invalid'">
           Please enter a valid email
         </h5>
-        <div class="txt_field">
+        <div
+          class="txt_field"
+          :id="passwordValidity === 'invalid' ? 'error' : ''"
+        >
           <input
             id="password"
             name="password"
@@ -244,8 +253,14 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
 body {
   background-color: #14a44d;
+}
+#error label {
+  color: var(--danger);
+}
+#error {
+  border-bottom-color: var(--danger);
 }
 </style>
