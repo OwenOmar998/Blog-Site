@@ -53,7 +53,9 @@ export const useFireBase = defineStore("FireBase", {
     displayName: "" as any,
     commentImg: "" as string | null,
     showSignInForm: true as boolean,
-    loggedIn: false,
+    loggedIn: JSON.parse(localStorage.getItem("user") || "{}").uid
+      ? true
+      : false,
     loginReq: false as boolean,
     signInValid: true as boolean,
     signUpValid: true as boolean,
@@ -241,6 +243,7 @@ export const useFireBase = defineStore("FireBase", {
     },
 
     async getBlog(id: string) {
+      this.loadingData = true;
       const querySnapshot = await getDocs(collection(db, "Blogs"));
       querySnapshot.forEach((doc) => {
         if (doc.id === id) {
@@ -254,9 +257,9 @@ export const useFireBase = defineStore("FireBase", {
           };
           useBlogPost().viewBlog = blog;
           this.getComment(blog.id);
-          /* router.push(`viewBlog/${blog.id}`); */
         }
       });
+      this.loadingData = false;
     },
 
     async getComment(id: string) {

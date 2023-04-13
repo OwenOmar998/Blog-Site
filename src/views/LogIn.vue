@@ -166,7 +166,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from "vue";
 import { useFireBase } from "../stores/FireBase";
-import router from "@/router";
+
 import { computed } from "@vue/reactivity";
 
 export default defineComponent({

@@ -33,7 +33,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: "/viewBlog:blogId",
+    path: "/viewBlog/:blogId",
     name: "viewBlog",
     component: () => import("../views/ViewBlog.vue"),
     meta: {
@@ -44,6 +44,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/:pathMatch(.*)*",
     component: () => import("../views/InvalidRoute.vue"),
+    meta: {
+      auth: false,
+      logged: true,
+    },
   },
 ];
 
@@ -55,7 +59,6 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const user = JSON.parse(localStorage.getItem("user") || "{}").uid;
   const admin = JSON.parse(localStorage.getItem("admin") || "{}") === true;
-  console.log(user);
   if ((to.meta.auth && !admin) || (!to.meta.logged && user)) next("/");
   else next();
 

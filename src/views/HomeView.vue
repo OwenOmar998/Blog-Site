@@ -33,9 +33,7 @@
             <p class="blog-post_text">
               {{ blog.blogContent.substring(0, blogPost.charNumber) }}...
             </p>
-            <router-link
-              @click="fireBase.getBlog(blog.id)"
-              :to="'/viewBlog' + blog.id"
+            <router-link :to="'/viewBlog/' + blog.id"
               ><button class="blog-post_btn">Read More</button></router-link
             >
           </div>
