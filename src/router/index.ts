@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import { useBlogPost } from "../stores/BlogPost";
 import { useFireBase } from "../stores/FireBase";
+import { getAuth, User } from "@firebase/auth";
 
 const routes: Array<RouteRecordRaw> = [
   {
