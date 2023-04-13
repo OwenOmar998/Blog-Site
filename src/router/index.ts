@@ -41,6 +41,10 @@ const routes: Array<RouteRecordRaw> = [
       logged: true,
     },
   },
+  {
+    path: "/:pathMatch(.*)*",
+    component: () => import("../views/InvalidRoute.vue"),
+  },
 ];
 
 const router = createRouter({
@@ -49,16 +53,14 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const user = JSON.parse(localStorage.getItem("user") ?? "");
-  const admin = JSON.parse(localStorage.getItem("admin") ?? "");
-  const isValidRoute = routes.some((route) => route.path === to.path);
-  if (!isValidRoute) next("/");
-  else {
-    await useFireBase().getData();
-    useBlogPost().resizeVar();
-    if ((to.meta.auth && !admin) || (!to.meta.logged && user)) next("/");
-    else next();
-  }
+  const user = JSON.parse(localStorage.getItem("user") || "{}").uid;
+  const admin = JSON.parse(localStorage.getItem("admin") || "{}") === true;
+  console.log(user);
+  if ((to.meta.auth && !admin) || (!to.meta.logged && user)) next("/");
+  else next();
+
+  await useFireBase().getData();
+  useBlogPost().resizeVar();
 });
 
 export default router;
