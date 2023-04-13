@@ -40,6 +40,7 @@ const routes: Array<RouteRecordRaw> = [
       auth: false,
       logged: true,
     },
+    props: true,
   },
   {
     path: "/:pathMatch(.*)*",
@@ -54,16 +55,20 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+
+  scrollBehavior(_, _2, savedPosition) {
+    if (savedPosition) {
+      return savedPosition;
+    }
+    return { left: 0, top: 0 };
+  },
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _, next) => {
   const user = JSON.parse(localStorage.getItem("user") || "{}").uid;
   const admin = JSON.parse(localStorage.getItem("admin") || "{}") === true;
   if ((to.meta.auth && !admin) || (!to.meta.logged && user)) next("/");
   else next();
-
-  await useFireBase().getData();
-  useBlogPost().resizeVar();
 });
 
 export default router;

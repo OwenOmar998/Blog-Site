@@ -43,6 +43,8 @@ interface comments {
 
 export const useFireBase = defineStore("FireBase", {
   state: () => ({
+    loadingComments: false,
+    viewBlogError: "",
     getDataError: "",
     loadingData: true as boolean,
     comments: [{}],
@@ -244,25 +246,41 @@ export const useFireBase = defineStore("FireBase", {
 
     async getBlog(id: string) {
       this.loadingData = true;
-      const querySnapshot = await getDocs(collection(db, "Blogs"));
-      querySnapshot.forEach((doc) => {
-        if (doc.id === id) {
-          const blog = {
-            id: doc.id,
-            blogTitle: doc.data().blogTitle,
-            blogAuthor: doc.data().blogAuthor,
-            blogContent: doc.data().blogContent,
-            imgURL: doc.data().imgURL,
-            date: doc.data().date,
-          };
-          useBlogPost().viewBlog = blog;
-          this.getComment(blog.id);
+      if (useBlogPost().Blogs.length) {
+        useBlogPost().Blogs.forEach((blog) => {
+          if (blog.id === id) useBlogPost().viewBlog = blog;
+        });
+      } else {
+        try {
+          const querySnapshot = await getDocs(collection(db, "Blogs"));
+          querySnapshot.forEach((doc) => {
+            if (doc.id === id) {
+              const blog = {
+                id: doc.id,
+                blogTitle: doc.data().blogTitle,
+                blogAuthor: doc.data().blogAuthor,
+                blogContent: doc.data().blogContent,
+                imgURL: doc.data().imgURL,
+                date: doc.data().date,
+              };
+              useBlogPost().viewBlog = blog;
+            }
+          });
+        } catch (error: any) {
+          this.errorMsg = error.code;
         }
-      });
+      }
+      if (!useBlogPost().viewBlog.id)
+        this.viewBlogError = "No blogs avaliable with the provided ID";
+      else this.viewBlogError = "";
+
       this.loadingData = false;
+      await this.getComment(id);
     },
 
     async getComment(id: string) {
+      this.loadingComments = true;
+      console.log(this.loadingComments);
       const querySnapshot = await getDocs(collection(db, "Comments"));
       let comment = [] as comment[];
       querySnapshot.forEach((doc) => {
@@ -271,6 +289,8 @@ export const useFireBase = defineStore("FireBase", {
         }
       });
       this.comments = Object.values(comment);
+      this.loadingComments = false;
+      console.log(this.loadingComments);
     },
 
     async createForm(

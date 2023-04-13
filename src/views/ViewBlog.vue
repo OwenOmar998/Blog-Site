@@ -4,6 +4,11 @@
       <h2>Loading...</h2>
     </div>
   </div>
+  <div v-else-if="fireBase.viewBlogError">
+    <div class="blog-post" style="display: flex">
+      <h2>{{ fireBase.viewBlogError }}</h2>
+    </div>
+  </div>
   <div v-else>
     <div class="title">
       <h1>{{ blogPost.viewBlog.blogTitle }}</h1>
@@ -35,21 +40,27 @@
     </div>
     <div class="container">
       <div class="comment__card" id="comments">
-        <h1>comments</h1>
-        <div class="comment__card-footer">
-          <div class="show-replies" @click="showReplyText">add comment</div>
-          <div
-            v-show="fireBase.comments.length !== 0"
-            class="show-replies"
-            @click="toggleReply"
-          >
-            <span v-if="fireBase.comments.length === 1">1 comment</span>
-            <span v-else>{{ fireBase.comments.length }} comments</span>
-            <i :class="showReplies ? 'fa fa-angle-up' : 'fa fa-angle-down'"></i>
+        <div v-if="fireBase.loadingComments"><h2>Loading...</h2></div>
+        <div v-else>
+          <h1>comments</h1>
+          <div class="comment__card-footer">
+            <div class="show-replies" @click="showReplyText">add comment</div>
+            <div
+              v-show="fireBase.comments.length !== 0"
+              class="show-replies"
+              @click="toggleReply"
+            >
+              <span v-if="fireBase.comments.length === 1">1 comment</span>
+              <span v-else>{{ fireBase.comments.length }} comments</span>
+              <i
+                :class="showReplies ? 'fa fa-angle-up' : 'fa fa-angle-down'"
+              ></i>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
     <div v-if="fireBase.comments.length === 0">
       <div class="container">
         <div class="comment__card">
@@ -57,6 +68,7 @@
         </div>
       </div>
     </div>
+
     <div
       v-else
       class="container"
@@ -114,9 +126,9 @@ import NestedComments from "@/components/NestedComments.vue";
 
 export default defineComponent({
   name: "viewBlog",
-  beforeCreate() {
-    console.log(this.$route.path.split("/")[2]);
-    useFireBase().getBlog(this.$route.path.split("/")[2]);
+  props: ["blogId"],
+  created() {
+    useFireBase().getBlog(this.blogId);
   },
   setup() {
     const showReplies = ref(false);
