@@ -4,7 +4,11 @@
     <div class="login" v-if="fireBase.showSignInForm">
       <h1>Login</h1>
       <form @submit.prevent="fireBase.signin(email, password)">
+<<<<<<< HEAD
         <div class="txt_field" :id="emailValidity === 'invalid' ? 'error' : ''">
+=======
+        <div class="txt_field">
+>>>>>>> db43c2ea0a3aeb60bbe84cbfdab77edc37e8d7f6
           <input
             id="email"
             name="email"
